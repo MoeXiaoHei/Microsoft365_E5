@@ -1,5 +1,6 @@
 # Microsoft365_E5_Renew_X
 # 使用方法
+拉起文件
 ```bash
 git clone https://github.com/MoeXiaoHei/Microsoft365_E5.git
 ```
