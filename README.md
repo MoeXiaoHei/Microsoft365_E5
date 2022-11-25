@@ -17,3 +17,7 @@ moexiaohei/microsoft-365-e5:latest
 默认密码在Deploy/Config.xml文件中
 password：12345678
 修改密码要重启容器
+
+#镜像地址
+docker.io/moexiaohei/microsoft-365-e5:latest
+ghcr.io/moexiaohei/microsoft-365-e5:latest
