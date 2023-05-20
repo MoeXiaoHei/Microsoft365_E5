@@ -7,8 +7,8 @@ git clone https://github.com/MoeXiaoHei/Microsoft365_E5.git
 # 创建容器
 ```bash
 docker run -dit \
--v $PWD/Microsoft365_E5_Renew_X/Deploy:/app/Deploy \
--v $PWD/Microsoft365_E5_Renew_X/appdata:/app/appdata \
+-v $PWD/Microsoft365_E5/Deploy:/app/Deploy \
+-v $PWD/Microsoft365_E5/appdata:/app/appdata \
 -p 1066:1066 \
 --name Microsoft365 \
 --restart always \
