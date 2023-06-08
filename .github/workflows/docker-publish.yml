@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - "master"
-name: Dependencies
-
-on:
   workflow_dispatch:
 
 jobs:
