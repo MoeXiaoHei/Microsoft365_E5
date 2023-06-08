@@ -1,52 +1,47 @@
-name: ci
-
-on:
-  push:
-    branches:
-      - "master"
-  workflow_dispatch:
-
-jobs:
-  dependencies:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Setup dependencies
-        run: |
-          # Install Docker CLI
-          curl https://get.docker.com | sh
-          
-          # Add docker/login-action as a dependency
-          git clone https://github.com/docker/login-action.git .github/actions/docker/login-action
-          
-          # Add docker/setup-buildx-action as a dependency
-          git clone https://github.com/docker/setup-buildx-action.git .github/actions/docker/setup-buildx-action
-          
-          # Add docker/build-push-action as a dependency
-          git clone https://github.com/docker/build-push-action.git .github/actions/docker/build-push-action
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v3
-      -
-        name: Login to Docker Hub
-        uses: docker/login-action@v2
+name: images2   # workflow名称，可以在Github项目主页的【Actions】中看到所有的workflow
+ 
+on:   # 配置触发workflow的事件
+  #push:
+    #branches:   # master分支有push时触发此workflow
+      #- 'master'
+    #tags:       # tag更新时触发此workflow
+      #- '*'
+      
+  workflow_dispatch:  #手动触发
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Test scenario tags'
+ 
+jobs:  # workflow中的job
+ 
+  push_to_registry:  # job的名字
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest  # job运行的基础环境
+ 
+    steps:  # 一个job由一个或多个step组成
+      - name: Check out the repo
+        uses: actions/checkout@v2   # 官方的action，获取代码
+ 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1  # 三方的action操作， 执行docker login
         with:
-          registry: docker.pkg.github.com
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}  # 配置dockerhub的认证，在Github项目主页 【Settings】 -> 【Secrets】 添加对应变量
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      -
-        name: Build and push
-        uses: docker/build-push-action@v4
+ 
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v2  # 抽取项目信息，主要是镜像的tag
         with:
-          context: .
-          file: ./Dockerfile
+          images: chen0928/difficulty
+ 
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3 # docker build & push
+        with:
+          context: .    #指定dockerfile文件的位置
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
