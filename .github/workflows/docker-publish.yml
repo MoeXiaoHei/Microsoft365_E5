@@ -1,13 +1,13 @@
-name: images2   # workflow名称，可以在Github项目主页的【Actions】中看到所有的workflow
- 
-on:   # 配置触发workflow的事件
-  #push:
-    #branches:   # master分支有push时触发此workflow
-      #- 'master'
-    #tags:       # tag更新时触发此workflow
-      #- '*'
-      
-  workflow_dispatch:  #手动触发
+# This is a basic workflow to help you get started with Actions
+name: build docker image
+# Controls when the action will run.
+on:
+  push:
+    branches:
+      - main
+# Allows you to run this workflow manually from the Actions tab
+  # 可以手动触发
+  workflow_dispatch:
     inputs:
       logLevel:
         description: 'Log level'
@@ -15,33 +15,44 @@ on:   # 配置触发workflow的事件
         default: 'warning'
       tags:
         description: 'Test scenario tags'
- 
-jobs:  # workflow中的job
- 
-  push_to_registry:  # job的名字
-    name: Push Docker image to Docker Hub
-    runs-on: ubuntu-latest  # job运行的基础环境
- 
-    steps:  # 一个job由一个或多个step组成
-      - name: Check out the repo
-        uses: actions/checkout@v2   # 官方的action，获取代码
- 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v1  # 三方的action操作， 执行docker login
+
+jobs:
+  buildx:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=today::$(date +'%Y-%m-%d_%H-%M')"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Available platforms
+        run: echo ${{ steps.buildx.outputs.platforms }}
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}  # 配置dockerhub的认证，在Github项目主页 【Settings】 -> 【Secrets】 添加对应变量
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
- 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v2  # 抽取项目信息，主要是镜像的tag
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
         with:
-          images: chen0928/difficulty
- 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v3 # docker build & push
-        with:
-          context: .    #指定dockerfile文件的位置
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          context: .
+          file: ./Dockerfile
+          # 所需要的体系结构，可以在 Available platforms 步骤中获取所有的可用架构
+          platforms: linux/amd64,linux/arm64/v8
+          # 镜像推送时间
+          push: ${{ github.event_name != 'pull_request' }}
+          # 给清单打上多个标签
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/microsoft365_E5:${{ steps.date.outputs.today }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/microsoft365_E5:latest
