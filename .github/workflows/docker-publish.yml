@@ -54,5 +54,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           # 给清单打上多个标签
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/microsoft365_E5:${{ steps.date.outputs.today }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/microsoft365_E5:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/microsoft-365-e5:${{ steps.date.outputs.today }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/microsoft-365-e5:latest
