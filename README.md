@@ -23,3 +23,7 @@ password：12345678
 docker.io/moexiaohei/microsoft-365-e5:latest
 
 ghcr.io/moexiaohei/microsoft-365-e5:latest
+
+# 在 Zeabur 上部署
+无需服务器
+[![Deploy on Zeabur](https://zeabur.com/button.svg)](https://dash.zeabur.com/templates/1UBE25)
