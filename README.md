@@ -28,4 +28,4 @@ ghcr.io/moexiaohei/microsoft-365-e5:latest
 无需服务器
 
 
-[![Deploy on Zeabur](https://zeabur.com/button.svg)](https://dash.zeabur.com/templates/1UBE25)
+[![Deploy on Zeabur](https://zeabur.com/button.svg)](https://dash.zeabur.com/templates/C1908T)
