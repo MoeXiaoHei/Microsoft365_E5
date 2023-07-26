@@ -25,7 +25,7 @@ docker.io/moexiaohei/microsoft-365-e5:latest
 ghcr.io/moexiaohei/microsoft-365-e5:latest
 
 # 在 Zeabur 上部署
-无需服务器
+无需服务器,但是这个七天之内要手动延期一次，也可以花钱续费
 
 
 [![Deploy on Zeabur](https://zeabur.com/button.svg)](https://dash.zeabur.com/templates/C1908T)
